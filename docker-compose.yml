@@ -1,0 +1,23 @@
+version: '3.3'
+
+networks:
+  noc_prod:
+    external: true
+
+services:
+  sbl-web-app:
+    image: sbl_web_prn:latest
+    container_name: sbl-web-app
+    networks:
+      - noc_prod
+    ports:
+      - "127.0.0.1:5550:5000"
+    env_file:
+      - .env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.prn_web_app.entrypoints=https"
+      - "traefik.http.routers.prn_web_app.rule=Host(`prn.example.com`)"
+      - "traefik.http.routers.prn_web_app.tls=true"
+      - "traefik.http.routers.prn_web_app.middlewares=auth-prn"
+      - "traefik.http.middlewares.auth-prn.basicauth.usersfile=.htpasswd-prn"
